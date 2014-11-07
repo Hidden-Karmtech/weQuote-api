@@ -17,29 +17,49 @@
                     }
                 })
                 .done(function(result) {
-                    console.log(result);
+                    $("#results").text(JSON.stringify(result));
                 });        
             }
                         
             function insert() {
+                var text = $("#txtText").val(),
+                	author = $("#txtAuthor").val(),
+                	source = $("#txtSource").val(),
+                	tag1 = $("#txtTag1").val(),
+                	tag2 = $("#txtTag2").val(),
+                	tag3 = $("#txtTag3").val(),
+                	tags = [];
+                	
+                if (tag1) {
+                	tags.push({
+                		name: tag1
+                	});
+                } 
+                if (tag2) {
+                	tags.push({
+                		name: tag2
+                	});
+                } 
+                if (tag3) {
+                	tags.push({
+                		name: tag3
+                	});
+                } 
+                
                 $.ajax({
                     type: "POST",
                     url: serverUrl + "insert",
                     data: {
                         quote: {
-							text: "Innamorarsi è lasciare i piedi vagare per le lande senza una bussola: gli occhi sono l'unica realtà.",
-							author: "Jim Morrison",
-							tags: [{
-								name: "musica"
-							}, {
-								name: "poesia"
-							}],
-							source: "http://it.wikiquote.org/wiki/Jim_Morrison"
+							text: text,
+							author: author,
+							tags: tags,
+							source: source
 						}
                     }
                 })
                 .done(function(result) {
-                    console.log(result);
+                    $("#results").text(JSON.stringify(result));
                 });    
             }
             
@@ -47,9 +67,42 @@
     </head>
     <body>        
         <h3>TEST API</h3>
+        
+        <div>
+        	<table>
+        		<tr>
+        			<td align="right">Testo: </td>
+        			<td><input id="txtText" type="text" size="150"/></td>
+        		</tr>
+        		<tr>
+        			<td align="right">Autore: </td>
+        			<td><input id="txtAuthor" type="text" size="150"/></td>
+        		</tr>
+        		<tr>
+        			<td align="right">Fonte: </td>
+        			<td><input type="text" id="txtSource" size="150"/></td>
+        		</tr>
+        		<tr>
+        			<td align="right">Tags: </td>
+        			<td><input id="txtTag1" type="text"/> - <input id="txtTag2" type="text"/> - <input id="txtTag3" type="text"/></td>
+        		</tr>
+        	</table>
+        </div>
+        
         <div>
             <button onclick="list()">LIST</button>
             <button onclick="insert()">INSERT</button>            
+        </div>
+        
+        <br/>
+        
+        <div>
+        	<table>
+        		<tr>
+        			<td align="right">Risultato: </td>
+        			<td><span id="results"/></td>
+        		</tr>
+        	</table>
         </div>                
     </body>
 </html>
