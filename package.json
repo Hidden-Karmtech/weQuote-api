@@ -23,8 +23,9 @@
     "npm": ">= 1.0.0"
   },
   "dependencies": {
+    "cors": "^2.5.0",
     "express": "~3.4.4",
-    "mongoose": "^3.8.18"
+    "mongoose": "^3.8.18"    
   },
   "devDependencies": {},
   "bundleDependencies": [],

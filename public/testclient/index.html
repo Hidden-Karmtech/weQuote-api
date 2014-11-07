@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TEST API</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript">
+            var serverUrl = "/";            
+            
+            function list() {
+                $.ajax({
+                    type: "GET",
+                    url: serverUrl + "list",
+                    data: {
+                        search: "volo"
+                    }
+                })
+                .done(function(result) {
+                    console.log(result);
+                });        
+            }
+                        
+            function insert() {
+                $.ajax({
+                    type: "POST",
+                    url: serverUrl + "insert",
+                    data: {
+                        quote: {
+							text: "Innamorarsi è lasciare i piedi vagare per le lande senza una bussola: gli occhi sono l'unica realtà.",
+							author: "Jim Morrison",
+							tags: [{
+								name: "musica"
+							}, {
+								name: "poesia"
+							}],
+							source: "http://it.wikiquote.org/wiki/Jim_Morrison"
+						}
+                    }
+                })
+                .done(function(result) {
+                    console.log(result);
+                });    
+            }
+            
+        </script>
+    </head>
+    <body>        
+        <h3>TEST API</h3>
+        <div>
+            <button onclick="list()">LIST</button>
+            <button onclick="insert()">INSERT</button>            
+        </div>                
+    </body>
+</html>
