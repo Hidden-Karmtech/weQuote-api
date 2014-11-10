@@ -9,11 +9,13 @@
             var serverUrl = "/";            
             
             function list() {
+                var search = $("#txtSearch").val();
+                
                 $.ajax({
                     type: "GET",
                     url: serverUrl + "list",
                     data: {
-                        search: "volo"
+                        search: search
                     }
                 })
                 .done(function(result) {
@@ -66,7 +68,9 @@
         </script>
     </head>
     <body>        
-        <h3>TEST API</h3>
+        <h1>TEST API</h3>
+        
+        <h3>Inserimento</h3>
         
         <div>
         	<table>
@@ -89,9 +93,23 @@
         	</table>
         </div>
         
-        <div>
-            <button onclick="list()">LIST</button>
+        <div>            
             <button onclick="insert()">INSERT</button>            
+        </div>
+
+        <h3>Ricerca</h3>
+        
+        <div>
+        	<table>
+        		<tr>
+        			<td align="right">Ricerca: </td>
+        			<td><input id="txtSearch" type="text" size="150"/></td>
+        		</tr>
+        	</table>
+        </div>
+        
+        <div>
+            <button onclick="list()">LIST</button>            
         </div>
         
         <br/>
