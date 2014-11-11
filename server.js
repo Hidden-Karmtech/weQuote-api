@@ -24,8 +24,10 @@ app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
 // Routes
-app.get('/list', routes.list);
+app.get('/authors', routes.authors);
 app.post('/insert', routes.insert);
+app.get('/list', routes.list);
+app.get('/tags', routes.tags);
 
 // Connessione a MongoDb
 mongoose.connect(mongoConfig.getConnectionString());

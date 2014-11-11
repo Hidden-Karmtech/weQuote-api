@@ -22,6 +22,26 @@
                     $("#results").text(JSON.stringify(result));
                 });        
             }
+            
+            function authors() {
+                $.ajax({
+                    type: "GET",
+                    url: serverUrl + "authors",
+                })
+                .done(function(result) {
+                    $("#results").text(JSON.stringify(result));
+                });        
+            }
+
+            function tags() {
+                $.ajax({
+                    type: "GET",
+                    url: serverUrl + "tags",
+                })
+                .done(function(result) {
+                    $("#results").text(JSON.stringify(result));
+                });        
+            }
                         
             function insert() {
                 var text = $("#txtText").val(),
@@ -110,6 +130,18 @@
         
         <div>
             <button onclick="list()">LIST</button>            
+        </div>
+        
+        <h3>Autori</h3>
+        
+        <div>
+            <button onclick="authors()">LIST AUTHORS</button>            
+        </div>
+        
+        <h3>Tags</h3>
+        
+        <div>
+            <button onclick="tags()">LIST TAGS</button>            
         </div>
         
         <br/>
