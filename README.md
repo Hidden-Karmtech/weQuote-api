@@ -13,7 +13,7 @@
 	- verb: GET
 	- params:
 		- search: Stringa di ricerca
-		- [optional] limit: : numero massimo di risultati 
+		- [optional] limit: numero massimo di risultati 
 
 - tags
 	- verb: GET
