@@ -1,3 +1,20 @@
-The OpenShift `nodejs` cartridge documentation can be found at:
+### API
 
-http://openshift.github.io/documentation/oo_cartridge_guide.html#nodejs
+- authors
+	- verb: GET
+	- params: -
+	
+- insert
+	- verb: POST
+	- params:
+		- quote: modello da inserire
+	
+- list
+	- verb: GET
+	- params:
+		- search: Stringa di ricerca
+		- [optional] limit: : numero massimo di risultati 
+
+- tags
+	- verb: GET
+	- params: -
