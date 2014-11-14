@@ -11,7 +11,13 @@ var express = require('express'),
 	mongoConfig = require('./lib/mongoConfig'),
 	routes = require('./lib/routes')(mongoose),
 	middlewares = require('./lib/middlewares'),
+	passport = require('passport'),	
+	passportConfig = require('./lib/passportConfig')(passport),
 	db;
+
+// Configurazione passport
+passportConfig.initGoogleConfig();
+passportConfig.initFacebookConfig();
 
 // Configurazione app
 app.use(middlewares.forceHttps);
