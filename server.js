@@ -10,9 +10,11 @@ var express = require('express'),
 	nodeConfig = require('./lib/nodeConfig'),
 	mongoConfig = require('./lib/mongoConfig'),
 	routes = require('./lib/routes')(mongoose),
+	middlewares = require('./lib/middlewares'),
 	db;
 
 // Configurazione app
+app.use(middlewares.forceHttps);
 app.use(express.favicon());
 app.use(express.logger());
 app.use(express.json());
