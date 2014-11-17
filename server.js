@@ -7,17 +7,14 @@ var express = require('express'),
 	cors = require('cors'),
 	mongoose = require('mongoose'),
 	app = express(),
-	nodeConfig = require('./lib/nodeConfig'),
-	mongoConfig = require('./lib/mongoConfig'),
+	config = require('./lib/config'),
 	routes = require('./lib/routes')(mongoose),
 	middlewares = require('./lib/middlewares'),
-	passport = require('passport'),	
-	passportConfig = require('./lib/passportConfig')(passport),
 	db;
 
 // Configurazione passport
-passportConfig.initGoogleConfig();
-passportConfig.initFacebookConfig();
+config.passport.initGoogleConfig();
+config.passport.initFacebookConfig();
 
 // Configurazione app
 app.use(middlewares.forceHttps);
@@ -37,12 +34,16 @@ app.post('/insert', routes.insert);
 app.get('/list', routes.list);
 app.get('/tags', routes.tags);
 
+// Routes Passport
+app.get('/auth/google', config.passport.authenticate('google'));
+app.get('/auth/return', routes.handlePassportAuthentication);
+
 // Connessione a MongoDb
-mongoose.connect(mongoConfig.getConnectionString());
+mongoose.connect(config.mongo.getConnectionString());
 db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', function() {
-	http.createServer(app).listen(nodeConfig.port, nodeConfig.host, function() {
-		console.log("Express server listening on port " + nodeConfig.port);
+	http.createServer(app).listen(config.node.port, config.node.host, function() {
+		console.log("Express server listening on port " + config.node.port);
 	});
 });
