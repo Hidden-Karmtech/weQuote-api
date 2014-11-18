@@ -10,7 +10,8 @@ var express = require('express'),
 	config = require('./lib/config'),
 	routes = require('./lib/routes')(mongoose),
 	middlewares = require('./lib/middlewares'),
-	db;
+	db,
+	googleLoginScope = 'https://www.googleapis.com/auth/plus.login';
 
 // Configurazione passport
 config.passport.initGoogleConfig();
@@ -35,7 +36,7 @@ app.get('/list', routes.list);
 app.get('/tags', routes.tags);
 
 // Routes Passport
-app.get('/auth/google', config.passport.authenticate('google'));
+app.get('/auth/google', config.passport.authenticate('google', googleLoginScope));
 app.get('/auth/return', routes.handlePassportAuthentication);
 
 // Connessione a MongoDb
