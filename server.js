@@ -36,8 +36,8 @@ app.get('/list', routes.list);
 app.get('/tags', routes.tags);
 
 // Routes Passport
-app.get('/auth/google', config.passport.authenticate('google', googleLoginScope));
-app.get('/auth/return', routes.handlePassportAuthentication);
+app.get('/auth/google', config.passport.authenticate('google', {scope: googleLoginScope}));
+app.get('/auth/return', config.passport.authenticate('google', {failureRedirect: '/'}), routes.handlePassportAuthentication);
 
 // Connessione a MongoDb
 mongoose.connect(config.mongo.getConnectionString());
