@@ -6,16 +6,17 @@ var express = require('express'),
 	http = require('http'),
 	cors = require('cors'),
 	mongoose = require('mongoose'),
+	models = require('./lib/models')(mongoose),
 	app = express(),
-	config = require('./lib/config'),
-	routes = require('./lib/routes')(mongoose),
+	config = require('./lib/config')(mongoose, models),
+	routes = require('./lib/routes')(mongoose, models),
 	middlewares = require('./lib/middlewares'),
 	db,
 	googleLoginScope = 'https://www.googleapis.com/auth/plus.login';
 
 // Configurazione passport
-config.passport.initGoogleConfig(mongoose);
-config.passport.initFacebookConfig(mongoose);
+config.passport.initGoogleConfig();
+config.passport.initFacebookConfig();
 
 // Configurazione app
 app.use(middlewares.forceHttps);
