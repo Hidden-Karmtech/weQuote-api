@@ -15,7 +15,15 @@ var express = require('express'),
 	db,
 	googleLoginScope = 'https://www.googleapis.com/auth/plus.login';
 
-// Configurazione passport
+//Configurazione passport
+passport.serializeUser(function(user, done) {
+	done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+	done(null, obj);
+});
+
 config.passport.initGoogleConfig();
 config.passport.initFacebookConfig();
 
@@ -29,7 +37,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(cors());
 app.use(passport.initialize());
-//app.use(passport.session());
+app.use(passport.session());
 app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
