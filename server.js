@@ -14,8 +14,8 @@ var express = require('express'),
 	googleLoginScope = 'https://www.googleapis.com/auth/plus.login';
 
 // Configurazione passport
-config.passport.initGoogleConfig();
-config.passport.initFacebookConfig();
+config.passport.initGoogleConfig(mongoose);
+config.passport.initFacebookConfig(mongoose);
 
 // Configurazione app
 app.use(middlewares.forceHttps);
