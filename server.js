@@ -8,7 +8,8 @@ var express = require('express'),
 	mongoose = require('mongoose'),
 	models = require('./lib/models')(mongoose),
 	app = express(),
-	config = require('./lib/config')(mongoose, models),
+	passport = require('passport'),
+	config = require('./lib/config')(mongoose, models, passport),
 	routes = require('./lib/routes')(mongoose, models),
 	middlewares = require('./lib/middlewares'),
 	db,
@@ -27,6 +28,8 @@ app.use(express.urlencoded());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(cors());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
