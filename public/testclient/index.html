@@ -13,7 +13,7 @@
                     type: "GET",
                     url: serverUrl + "auth/google",
                 })
-                .done(function(result) {
+                .always(function(result) {
                     $("#results").text(JSON.stringify(result));
                 });        
             }
