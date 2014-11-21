@@ -8,16 +8,6 @@
         <script type="text/javascript">
             var serverUrl = "/";            
             
-            function authGoogle() {                
-                $.ajax({
-                    type: "GET",
-                    url: serverUrl + "auth/google",
-                })
-                .always(function(result) {
-                    $("#results").text(JSON.stringify(result));
-                });        
-            }
-            
             function list() {
                 var search = $("#txtSearch").val();
                 
@@ -171,8 +161,7 @@
         
         <div>
             <a href="/auth/google">Google</a>
-            <a href="/auth/facebook">Facebook</a>
-            <button onclick="authGoogle()">Google</button>  
+            <a href="/auth/facebook">Facebook</a>              
         </div>
                     
     </body>
