@@ -57,6 +57,6 @@ db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', function() {
 	http.createServer(app).listen(config.node.port, config.node.host, function() {
-		console.log("Express server listening on port " + config.node.port);
+		console.log("Express server listening on port " + config.node.port);		
 	});
 });
