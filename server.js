@@ -6,27 +6,17 @@ var express = require('express'),
 	http = require('http'),
 	cors = require('cors'),
 	mongoose = require('mongoose'),
-	models = require('./lib/models')(mongoose),
 	app = express(),
-	passport = require('passport'),
-	config = require('./lib/config')(mongoose, models, passport),
-	routes = require('./lib/routes')(mongoose, models),
-	middlewares = require('./lib/middlewares'),
 	db,
-	googleLoginScope = 'https://www.googleapis.com/auth/plus.login';
-
-//Configurazione passport
-passport.serializeUser(function(user, done) {
-	done(null, user);
-});
-
-passport.deserializeUser(function(obj, done) {
-	done(null, obj);
-});
-
-config.passport.initGoogleConfig();
-config.passport.initFacebookConfig();
-
+	Models = require('./lib/Models'),
+	models = Models.create(mongoose),
+	Config = require('./lib/Config'),
+	config = Config.create(),
+	Routes = require('./lib/Routes'),
+	routes = Routes.create(mongoose, models),
+	Middlewares = require('./lib/Middlewares'),
+	middlewares = Middlewares.create();
+	
 // Configurazione app
 app.use(middlewares.forceHttps);
 app.use(express.favicon());
@@ -36,8 +26,6 @@ app.use(express.urlencoded());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(cors());
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
@@ -47,12 +35,6 @@ app.post('/insert', routes.insert);
 app.get('/list', routes.list);
 app.get('/tags', routes.tags);
 
-// Routes Passport
-/*
-app.get('/auth/google', config.passport.authenticate('google', {scope: googleLoginScope}));
-app.get('/auth/return', config.passport.authenticate('google', {failureRedirect: '/'}), routes.handlePassportAuthentication);
-*/
-
 // Connessione a MongoDb
 mongoose.connect(config.mongo.getConnectionString());
 db = mongoose.connection;
@@ -60,5 +42,10 @@ db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', function() {
 	http.createServer(app).listen(config.node.port, config.node.host, function() {
 		console.log("Express server listening on port " + config.node.port);		
+		
+		/*
+		models.populateOmniSearch();
+		*/
+		
 	});
 });

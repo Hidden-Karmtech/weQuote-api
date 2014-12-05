@@ -25,14 +25,18 @@
 				};
                                   
             function list() {
-                var search = $("#txtSearch").val();
+                var search = $("#txtSearch").val(),
+                	searchAuthor = $("#txtSearchAuthor").val(),
+                	searchTag = $("#txtSearchTag").val();
                 
                 $.ajax({
                     type: "GET",
                     url: serverUrl + "list",
                     data: {
                     	userProfile: userProfile,
-                        search: search                        
+                        search: search,
+                        author: searchAuthor,
+                        tag: searchTag                        
                     }
                 })
                 .done(function(result) {
@@ -146,9 +150,27 @@
         </div>
         
         <div>
-            <button onclick="list()">LIST</button>            
+        	<table>
+        		<tr>
+        			<td align="right">Ricerca per Autore: </td>
+        			<td><input id="txtSearchAuthor" type="text" size="150"/></td>
+        		</tr>
+        	</table>
         </div>
         
+        <div>
+        	<table>
+        		<tr>
+        			<td align="right">Ricerca per Tag: </td>
+        			<td><input id="txtSearchTag" type="text" size="150"/></td>
+        		</tr>
+        	</table>
+        </div>
+        
+        <div>
+            <button onclick="list()">LIST</button>            
+        </div>
+                        
         <h3>Autori</h3>
         
         <div>
@@ -174,12 +196,5 @@
         
         <br/>
         
-        <h3>Autenticazione</h3>
-        
-        <div>
-            <a href="/auth/google">Google</a>
-            <a href="/auth/facebook">Facebook</a>              
-        </div>
-                    
     </body>
 </html>

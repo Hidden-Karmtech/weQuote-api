@@ -14,6 +14,7 @@
 	- params:
 		- search: Stringa di ricerca
 		- [optional] limit: numero massimo di risultati 
+		- [optional] maxlen: numero massimo di caratteri per la citazione
 
 - tags
 	- verb: GET
