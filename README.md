@@ -12,7 +12,9 @@
 - list
 	- verb: GET
 	- params:
-		- search: Stringa di ricerca
+		- search: OmniSearch
+		- tag: Ricerca mirata per tag
+		- author: Ricerca mirata per autore
 		- [optional] limit: numero massimo di risultati 
 		- [optional] maxlen: numero massimo di caratteri per la citazione
 
