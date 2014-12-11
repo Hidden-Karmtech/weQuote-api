@@ -7,22 +7,7 @@
         <script src="bower_components/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript">
             var serverUrl = "/",
-            	userProfile = { 
-					"__v" : 0 , 
-					"_id" : { 
-						"$oid" : "546ca41c1faaa000007e9655"
-					}, 
-					"familyName" : "di Prova", 
-					"gender" : "male", 
-					"givenName" : "Utente", 
-					"id" : "111520471837709045589", 
-					"link" : "https://plus.google.com/+UtentediProva", 
-					"locale" : "it", 
-					"name" : "Utente di Prova", 
-					"picture" : "https://lh5.googleusercontent.com/-3UukMNBe6nw/AAAAAAAAAAI/AAAAAAAAAlg/asdfasdf/photo.jpg", 
-					"provider" : "google",
-					"credits": 0
-				};
+            	deviceUUID = 'testclient';
                                   
             function list() {
                 var search = $("#txtSearch").val(),
@@ -33,7 +18,7 @@
                     type: "GET",
                     url: serverUrl + "list",
                     data: {
-                    	userProfile: userProfile,
+                    	deviceUUID: deviceUUID,
                         search: search,
                         author: searchAuthor,
                         tag: searchTag,

@@ -15,8 +15,9 @@
 		- search: OmniSearch
 		- tag: Ricerca mirata per tag
 		- author: Ricerca mirata per autore
+		- deviceUUID: UUID dispositivo
 		- [optional] limit: numero massimo di risultati 
-		- [optional] maxlen: numero massimo di caratteri per la citazione
+		- [optional] maxlen: numero massimo di caratteri per la citazione		
 
 - tags
 	- verb: GET
