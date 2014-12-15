@@ -91,6 +91,21 @@
                     $("#results").text(JSON.stringify(result));
                 });    
             }
+            
+            function quoteExists() {
+            	var text = $("#txtSearch").val();
+            	
+            	$.ajax({
+                    type: "GET",
+                    url: serverUrl + "quoteExists",
+                    data: {
+                    	search: text
+                    }
+                })
+                .done(function(result) {
+                    $("#results").text(JSON.stringify(result));
+                });                	
+            }
                         
         </script>
     </head>
@@ -167,6 +182,14 @@
         
         <div>
             <button onclick="tags()">LIST TAGS</button>            
+        </div>
+        
+        <br/>
+        
+        <h3>Quote Exists</h3>
+        
+        <div>
+            <button onclick="quoteExists()">QUOTE EXISTS</button>            
         </div>
         
         <br/>

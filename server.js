@@ -33,6 +33,7 @@ app.use(express.static(__dirname + '/public'));
 app.get('/authors', routes.authors);
 app.post('/insert', routes.insert);
 app.get('/list', routes.list);
+app.get('/quoteExists', routes.quoteExists);
 app.get('/tags', routes.tags);
 
 // Connessione a MongoDb

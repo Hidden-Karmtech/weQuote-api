@@ -19,6 +19,11 @@
 		- [optional] limit: numero massimo di risultati 
 		- [optional] maxlen: numero massimo di caratteri per la citazione		
 
+- quoteExists
+	- verb: GET
+	- params:
+		- search: Testo citazione
+
 - tags
 	- verb: GET
 	- params: -
