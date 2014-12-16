@@ -8,11 +8,28 @@
         <script type="text/javascript">
             var serverUrl = "/",
             	deviceUUID = 'testclient';
+            
+            function share(deviceUUID, quoteId) {
+            	$.ajax({
+                    type: "GET",
+                    url: serverUrl + "share",
+                    data: {
+                    	deviceUUID: deviceUUID,
+                        quoteId: quoteId                    
+                    }
+                })
+                .done(function(result) {
+                    console.log(result);
+                });     
+            }
                                   
             function list() {
                 var search = $("#txtSearch").val(),
                 	searchAuthor = $("#txtSearchAuthor").val(),
-                	searchTag = $("#txtSearchTag").val();
+                	searchTag = $("#txtSearchTag").val(),
+                	resultContent,
+                	tableContent,
+                	i;
                 
                 $.ajax({
                     type: "GET",
@@ -26,7 +43,24 @@
                     }
                 })
                 .done(function(result) {
-                    $("#results").text(JSON.stringify(result));
+                    
+                    tableContent = '';
+                    for (i = 0; i < result.length; i++) {
+                    	tableContent = tableContent + '<tr>' +
+                    		'<td>' + result[i].text + '</td>' +
+                    		'<td>' + result[i].author + '</td>' +
+                    		'<td><button onclick="share(' + "'" + deviceUUID + "'" + ', ' + "'" + result[i]._id + "'" + ')">Share</button></td>' +
+                    		'</tr>';
+                    }
+                    
+                    resultContent = '<table>' +
+                    	'<tr>' +
+                    	'<td>Testo</td>' +
+                    	'<td>Autore</td>' +
+                    	'<td>Azioni</td>' +
+                    	'</tr>' + tableContent + '</tr>' +
+                    	'</table>';
+                    $("#results").html(resultContent);
                 });        
             }
             

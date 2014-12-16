@@ -24,6 +24,12 @@
 	- params:
 		- search: Testo citazione
 
+- share
+	- verb: GET
+	- params:
+		- quoteId: Id citazione
+		- deviceUUID: UUID dispositivo
+
 - tags
 	- verb: GET
 	- params: -

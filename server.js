@@ -34,6 +34,7 @@ app.get('/authors', routes.authors);
 app.post('/insert', routes.insert);
 app.get('/list', routes.list);
 app.get('/quoteExists', routes.quoteExists);
+app.get('/share', routes.share);
 app.get('/tags', routes.tags);
 
 // Connessione a MongoDb
