@@ -140,6 +140,46 @@
                     $("#results").text(JSON.stringify(result));
                 });                	
             }
+            
+            function clean() {
+            	$.ajax({
+                    type: "GET",
+                    url: serverUrl + "clean"
+                })
+                .done(function(result) {
+                    $("#results").text("Pulizia di " + JSON.stringify(result) + " citazioni");
+                });                	
+            }
+            
+            function removeQuotesWithTextDuplicated() {
+            	$.ajax({
+                    type: "GET",
+                    url: serverUrl + "removeQuotesWithTextDuplicated"
+                })
+                .done(function(result) {
+                    $("#results").text("Pulizia di " + JSON.stringify(result) + " citazioni");
+                });                	
+            }
+            
+            function removeQuotesWithWrongAuthor() {
+            	$.ajax({
+                    type: "GET",
+                    url: serverUrl + "removeQuotesWithWrongAuthor"
+                })
+                .done(function(result) {
+                    $("#results").text("Pulizia di " + JSON.stringify(result) + " citazioni");
+                });                	
+            }
+            
+            function removeQuotesWithShortText() {
+            	$.ajax({
+                    type: "GET",
+                    url: serverUrl + "removeQuotesWithShortText"
+                })
+                .done(function(result) {
+                    $("#results").text("Pulizia di " + JSON.stringify(result) + " citazioni");
+                });                	
+            }
                         
         </script>
     </head>
@@ -224,6 +264,17 @@
         
         <div>
             <button onclick="quoteExists()">QUOTE EXISTS</button>            
+        </div>
+        
+        <br/>
+        
+        <h3>Bonifica</h3>
+        
+        <div>
+            <button onclick="clean()">Pulizia Citazioni</button>
+            <button onclick="removeQuotesWithTextDuplicated()">Rimozione citazioni duplicate (per testo)</button>
+            <button onclick="removeQuotesWithWrongAuthor()">Rimozione citazioni con autore errato</button>
+            <button onclick="removeQuotesWithShortText()">Rimozione citazioni con testo più corto di 15 caratteri</button>            
         </div>
         
         <br/>

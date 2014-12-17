@@ -37,6 +37,12 @@ app.get('/quoteExists', routes.quoteExists);
 app.get('/share', routes.share);
 app.get('/tags', routes.tags);
 
+// Routes di utilità
+app.get('/clean', routes.clean);
+app.get('/removeQuotesWithTextDuplicated', routes.removeQuotesWithTextDuplicated);
+app.get('/removeQuotesWithWrongAuthor', routes.removeQuotesWithWrongAuthor);
+app.get('/removeQuotesWithShortText', routes.removeQuotesWithShortText);
+
 // Connessione a MongoDb
 mongoose.connect(config.mongo.getConnectionString());
 db = mongoose.connection;
@@ -44,10 +50,5 @@ db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', function() {
 	http.createServer(app).listen(config.node.port, config.node.host, function() {
 		console.log("Express server listening on port " + config.node.port);		
-		
-		/*
-		models.populateOmniSearch();
-		*/
-		
 	});
 });
