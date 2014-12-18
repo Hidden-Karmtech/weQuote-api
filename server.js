@@ -39,6 +39,7 @@ app.get('/tags', routes.tags);
 
 // Routes di utilità
 app.get('/clean', routes.clean);
+app.get('/handshake', routes.handshake);
 app.get('/removeQuotesWithTextDuplicated', routes.removeQuotesWithTextDuplicated);
 app.get('/removeQuotesWithWrongAuthor', routes.removeQuotesWithWrongAuthor);
 app.get('/removeQuotesWithShortText', routes.removeQuotesWithShortText);

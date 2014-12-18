@@ -151,13 +151,23 @@
                 });                	
             }
             
+            function handshake() {
+            	$.ajax({
+                    type: "GET",
+                    url: serverUrl + "handshake"
+                })
+                .done(function(result) {
+                    $("#results").text(JSON.stringify(result));
+                });                	
+            }
+            
             function removeQuotesWithTextDuplicated() {
             	$.ajax({
                     type: "GET",
                     url: serverUrl + "removeQuotesWithTextDuplicated"
                 })
                 .done(function(result) {
-                    $("#results").text("Pulizia di " + JSON.stringify(result) + " citazioni");
+                    $("#results").text("Rimosse " + JSON.stringify(result) + " citazioni");
                 });                	
             }
             
@@ -167,7 +177,7 @@
                     url: serverUrl + "removeQuotesWithWrongAuthor"
                 })
                 .done(function(result) {
-                    $("#results").text("Pulizia di " + JSON.stringify(result) + " citazioni");
+                    $("#results").text("Rimosse " + JSON.stringify(result) + " citazioni");
                 });                	
             }
             
@@ -177,7 +187,7 @@
                     url: serverUrl + "removeQuotesWithShortText"
                 })
                 .done(function(result) {
-                    $("#results").text("Pulizia di " + JSON.stringify(result) + " citazioni");
+                    $("#results").text("Rimosse " + JSON.stringify(result) + " citazioni");
                 });                	
             }
                         
@@ -271,6 +281,7 @@
         <h3>Bonifica</h3>
         
         <div>
+            <button onclick="handshake()">Handshake</button>
             <button onclick="clean()">Pulizia Citazioni</button>
             <button onclick="removeQuotesWithTextDuplicated()">Rimozione citazioni duplicate (per testo)</button>
             <button onclick="removeQuotesWithWrongAuthor()">Rimozione citazioni con autore errato</button>
