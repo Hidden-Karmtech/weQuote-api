@@ -22,6 +22,10 @@
                     console.log(result);
                 });     
             }
+            
+            function removeQuote(quoteId) {
+            	alert(quoteId);
+            }
                                   
             function list() {
                 var search = $("#txtSearch").val(),
@@ -29,7 +33,9 @@
                 	searchTag = $("#txtSearchTag").val(),
                 	resultContent,
                 	tableContent,
-                	i;
+                	tags,
+                	i,
+                	j;
                 
                 $.ajax({
                     type: "GET",
@@ -38,26 +44,35 @@
                     	deviceUUID: deviceUUID,
                         search: search,
                         author: searchAuthor,
-                        tag: searchTag,
-                        maxlen: 100                        
+                        tag: searchTag                                               
                     }
                 })
                 .done(function(result) {
-                    
+                                                            
                     tableContent = '';
                     for (i = 0; i < result.length; i++) {
+                    	tags = '';
+                    	for (j = 0; j < result[i].tags.length; j++) {
+                    		tags += (result[i].tags[j].name + ' ');
+                    	}
+                    	
                     	tableContent = tableContent + '<tr>' +
                     		'<td>' + result[i].text + '</td>' +
                     		'<td>' + result[i].author + '</td>' +
-                    		'<td><button onclick="share(' + "'" + deviceUUID + "'" + ', ' + "'" + result[i]._id + "'" + ')">Share</button></td>' +
+                    		'<td>' + tags + '</td>' +
+                    		'<td>' + 
+                    		'<button onclick="share(' + "'" + deviceUUID + "'" + ', ' + "'" + result[i]._id + "'" + ')">Share</button>' + 
+                    		'<button onclick="removeQuote(' + "'" + result[i]._id + "'" + ')">Delete</button>' + 
+                    		'</td>' +
                     		'</tr>';
                     }
                     
-                    resultContent = '<table>' +
+                    resultContent = '<table border="1">' +
                     	'<tr>' +
-                    	'<td>Testo</td>' +
-                    	'<td>Autore</td>' +
-                    	'<td>Azioni</td>' +
+                    	'<td><b>Testo</b></td>' +
+                    	'<td><b>Autore</b></td>' +
+                    	'<td><b>Tags</b></td>' +
+                    	'<td><b>Azioni</b></td>' +
                     	'</tr>' + tableContent + '</tr>' +
                     	'</table>';
                     $("#results").html(resultContent);
@@ -161,36 +176,16 @@
                 });                	
             }
             
-            function removeQuotesWithTextDuplicated() {
+            function removeWrongQuotes() {
             	$.ajax({
                     type: "GET",
-                    url: serverUrl + "removeQuotesWithTextDuplicated"
+                    url: serverUrl + "removeWrongQuotes"
                 })
                 .done(function(result) {
                     $("#results").text("Rimosse " + JSON.stringify(result) + " citazioni");
                 });                	
             }
             
-            function removeQuotesWithWrongAuthor() {
-            	$.ajax({
-                    type: "GET",
-                    url: serverUrl + "removeQuotesWithWrongAuthor"
-                })
-                .done(function(result) {
-                    $("#results").text("Rimosse " + JSON.stringify(result) + " citazioni");
-                });                	
-            }
-            
-            function removeQuotesWithShortText() {
-            	$.ajax({
-                    type: "GET",
-                    url: serverUrl + "removeQuotesWithShortText"
-                })
-                .done(function(result) {
-                    $("#results").text("Rimosse " + JSON.stringify(result) + " citazioni");
-                });                	
-            }
-                        
         </script>
     </head>
     <body>        
@@ -283,9 +278,7 @@
         <div>
             <button onclick="handshake()">Handshake</button>
             <button onclick="clean()">Pulizia Citazioni</button>
-            <button onclick="removeQuotesWithTextDuplicated()">Rimozione citazioni duplicate (per testo)</button>
-            <button onclick="removeQuotesWithWrongAuthor()">Rimozione citazioni con autore errato</button>
-            <button onclick="removeQuotesWithShortText()">Rimozione citazioni con testo più corto di 15 caratteri</button>            
+            <button onclick="removeWrongQuotes()">Rimozione citazioni errate</button>
         </div>
         
         <br/>
