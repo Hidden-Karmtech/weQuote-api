@@ -41,6 +41,7 @@ app.get('/tags', routes.tags);
 app.get('/clean', routes.clean);
 app.get('/handshake', routes.handshake);
 app.get('/removeWrongQuotes', routes.removeWrongQuotes);
+app.get('/removeQuote', routes.removeQuote);
 
 // Connessione a MongoDb
 mongoose.connect(config.mongo.getConnectionString());

@@ -24,7 +24,16 @@
             }
             
             function removeQuote(quoteId) {
-            	alert(quoteId);
+            	$.ajax({
+                    type: "GET",
+                    url: serverUrl + "removeQuote",
+                    data: {                    	
+                        quoteId: quoteId                    
+                    }
+                })
+                .done(function(result) {                    
+                    list();
+                });    
             }
                                   
             function list() {
