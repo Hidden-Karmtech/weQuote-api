@@ -11,7 +11,7 @@
             
             function share(deviceUUID, quoteId) {
             	$.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: serverUrl + "share",
                     data: {
                     	deviceUUID: deviceUUID,

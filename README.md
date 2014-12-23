@@ -34,7 +34,7 @@
 	- return: true se la citazione esiste, altrimenti false
 
 - share
-	- verb: GET
+	- verb: POST
 	- params:
 		- quoteId: Id citazione
 		- deviceUUID: UUID dispositivo
