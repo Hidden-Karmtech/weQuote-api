@@ -12,8 +12,10 @@ var express = require('express'),
 	models = Models.create(mongoose),
 	Config = require('./lib/Config'),
 	config = Config.create(),
+	MongoRepository = require('./lib/MongoRepository'),
+	mongoRepository = MongoRepository.create(mongoose, models),
 	Routes = require('./lib/Routes'),
-	routes = Routes.create(mongoose, models),
+	routes = Routes.create(mongoRepository),
 	Middlewares = require('./lib/Middlewares'),
 	middlewares = Middlewares.create();
 	
@@ -41,7 +43,7 @@ app.get('/tags', routes.tags);
 app.get('/clean', routes.clean);
 app.get('/handshake', routes.handshake);
 app.get('/removeWrongQuotes', routes.removeWrongQuotes);
-app.del('/removeQuote', routes.removeQuote);
+app.del('/remove', routes.remove);
 
 // Connessione a MongoDb
 mongoose.connect(config.mongo.getConnectionString());

@@ -3,6 +3,10 @@
 var mocha = require('mocha'),
 	chai = require('chai'),
 	expect = chai.expect,
+	sinon = require('sinon'),
+	sinonChai = require('sinon-chai'),
+	express = require('express'),
+	moment = require('moment'),
 	Config = require('../lib/Config'),
 	config = Config.create(),
 	Middlewares = require('../lib/Middlewares'),
@@ -12,8 +16,12 @@ var mocha = require('mocha'),
 	mongoose = require('mongoose'),
 	Models = require('../lib/Models'),
 	models = Models.create(mongoose),
+	MongoRepository = require('../lib/MongoRepository'),
+	mongoRepository = MongoRepository.create(mongoose, models),
 	Routes = require('../lib/Routes'),
-	routes = Routes.create(mongoose, models);
+	routes = Routes.create(mongoRepository);
+
+chai.use(sinonChai);
 
 describe('Il modulo Config', function() {
 	
@@ -146,7 +154,21 @@ describe('Il modulo Models', function() {
 		
 });
 
+describe('Il modulo MongoRepository', function() {
+	
+	it('deve esistere', function() {
+		expect(MongoRepository).not.to.be.undefined;
+	});
+	
+	it('deve consentire la creazione di un nuovo oggetto mongoRepository', function() {
+		expect(mongoRepository).not.to.be.undefined;
+	});
+	
+});
+
 describe('Il modulo Routes', function() {
+	var responseStub = sinon.stub(express.response),
+		responseContentType = { "Content-Type": "application/json" };
 	
 	it('deve esistere', function() {
 		expect(Routes).not.to.be.undefined;
@@ -155,5 +177,359 @@ describe('Il modulo Routes', function() {
 	it('deve consentire la creazione di un nuovo oggetto routes', function() {
 		expect(routes).not.to.be.undefined;
 	});
+	
+	describe('La route \'authors\'', function() {
+		var authorsResult = [ { "count": 1, "name": "Aaron Ciechanover" } ],
+			authorsStub = sinon.stub(mongoRepository, 'authors').callsArgWith(0, false, authorsResult),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository);
 		
+		dummyRoutes.authors(dummyRequest, responseStub);
+		
+		it('deve chiamare la funzione \'authors\' del repository', function() {
+			expect(authorsStub.calledOnce).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve rispondere con status = 200', function() {
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve rispondere con un elenco di autori e numero di citazioni per autore', function() {
+			expect(responseStub.end.calledWith(JSON.stringify(authorsResult))).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'clean\'', function() {
+		var cleanStub = sinon.stub(mongoRepository, 'clean').callsArgWith(0, false, null),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository);
+		
+		dummyRoutes.clean(dummyRequest, responseStub);
+		
+		it('deve chiamare la funzione \'clean\' del repository', function() {
+			expect(cleanStub.calledOnce).to.be.true;
+		});
+		
+		it('deve rispondere sempre con status = 200', function() {
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'handshake\'', function() {
+		var handshakeStub = sinon.stub(mongoRepository, 'handshake').callsArgWith(0, false, moment().toDate()),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository);
+		
+		dummyRoutes.handshake(dummyRequest, responseStub);
+		
+		it('deve chiamare la funzione \'handshake\' del repository', function() {
+			expect(handshakeStub.calledOnce).to.be.true;
+		});
+		
+		it('deve rispondere sempre con status = 200', function() {
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'insert\'', function() {
+		var goodQuote = {
+				author: "Autore di prova",
+				text: "Questo è il testo di prova della citazione di prova",
+				tags: [{
+					name: "amore",
+				}],
+				source: "nessuna"
+			},
+			badQuote = {
+				text: "Questo è il testo di prova della citazione di prova errata",
+				tags: [{
+					name: "odio",
+				}],
+				source: "nessuna"
+			},
+			insertStub = sinon.stub(mongoRepository, 'insert'),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository),
+			errorMessage = "Autore obbligatorio";
+		
+		insertStub.withArgs(goodQuote).callsArgWith(1, false, goodQuote);
+		insertStub.withArgs(badQuote).callsArgWith(1, true, errorMessage);
+		
+		it('deve chiamare la funzione \'insert\' del repository', function() {
+			dummyRequest.body = {};			
+			dummyRoutes.insert(dummyRequest, responseStub);
+
+			expect(insertStub.calledOnce).to.be.true;
+		});
+
+		it('in caso di esito positivo, deve rispondere con status = 200', function() {
+			dummyRequest.body = { quote: goodQuote };
+			dummyRoutes.insert(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve ritornare il modello appena inserito', function() {
+			dummyRequest.body = { quote: goodQuote };
+			dummyRoutes.insert(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify(goodQuote))).to.be.true;
+		});
+		
+		it('in caso di modello non valido, deve rispondere con status = 500', function() {
+			dummyRequest.body = { quote: badQuote };
+			dummyRoutes.insert(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(500, responseContentType)).to.be.true;
+		});
+				
+		it('in caso di modello non valido, deve ritornare un messaggio di errore', function() {
+			dummyRequest.body = { quote: badQuote };
+			dummyRoutes.insert(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify({ error: errorMessage }))).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'list\'', function() {
+		var listStub = sinon.stub(mongoRepository, 'list'),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository),
+			goodOptions = {
+				search: undefined,
+				author: "Papa Giovanni Paolo II",
+				tag: undefined,
+				limit: undefined,
+				maxlen: undefined,
+				deviceUUID: undefined,
+				userProfile: undefined
+			},
+			badOptions = {
+				search: undefined,
+				author: "simula un errore",
+				tag: undefined,
+				limit: undefined,
+				maxlen: undefined,
+				deviceUUID: undefined,
+				userProfile: undefined
+			},
+			dummyResponse = [{
+				"text":"Tutta la grandezza del lavoro è dentro l'uomo.",
+				"author":"Papa Giovanni Paolo II",
+				"source":"",
+				"omniSearch":"tutta la grandezza del lavoro è dentro l'uomo.papa giovanni paolo iiuniverso",
+				"_id":"549351eb85ca049ca121e5fd",
+				"__v":0,
+				"r":{"coordinates":[0.41940971021540463,0.15254574501886964],"type":"Point"},
+				"tags":[{"name":"universo","_id":"549351eb85ca049ca121e5fe"}]
+			}],
+			errorMessage = 'errore interno';
+		
+		listStub.withArgs(goodOptions).callsArgWith(1, false, dummyResponse);
+		listStub.withArgs(badOptions).callsArgWith(1, true, errorMessage);
+		
+		it('deve chiamare la funzione \'list\' del repository', function() {
+			dummyRequest.query = {};
+			dummyRoutes.list(dummyRequest, responseStub);
+			
+			expect(listStub.calledOnce).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve rispondere con status = 200', function() {
+			dummyRequest.query = { author: "Papa Giovanni Paolo II"	};
+			dummyRoutes.list(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+
+		it('in caso di esito positivo, deve restituire l\'elenco delle citazioni che soddisfano i criteri di ricerca', function() {
+			dummyRequest.query = { author: "Papa Giovanni Paolo II"	};
+			dummyRoutes.list(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify(dummyResponse))).to.be.true;
+		});
+		
+		it('in caso di esito negativo, deve rispondere con status = 500', function() {
+			dummyRequest.query = { author: "simula un errore"	};
+			dummyRoutes.list(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+		it('in caso di esito negativo, deve ritornare un messaggio di errore', function() {
+			dummyRequest.query = { author: "simula un errore"	};
+			dummyRoutes.list(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify({ error: errorMessage }))).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'quoteExists\'', function() {
+		var quoteExistsStub = sinon.stub(mongoRepository, 'quoteExists'),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository),
+			goodText = 'testo che esiste',
+			badText = 'testo che non esiste',
+			errText = 'simula errore',
+			errorMessage = 'errore interno';
+		
+		quoteExistsStub.withArgs(goodText).callsArgWith(1, false, true);
+		quoteExistsStub.withArgs(badText).callsArgWith(1, false, false);
+		quoteExistsStub.withArgs(errText).callsArgWith(1, true, errorMessage);
+		
+		it('deve chiamare la funzione \'quoteExists\' del repository', function() {
+			dummyRequest.query = {};			
+			dummyRoutes.quoteExists(dummyRequest, responseStub);
+
+			expect(quoteExistsStub.calledOnce).to.be.true;
+		});
+
+		it('in caso di esito positivo, deve rispondere con status = 200', function() {
+			dummyRequest.query = { search: goodText };
+			dummyRoutes.quoteExists(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+
+		it('in caso di esito positivo, deve restituire \'true\' se il testo della citazione esiste', function() {
+			dummyRequest.query = { search: goodText };
+			dummyRoutes.quoteExists(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify(true))).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve restituire \'false\' se il testo della citazione non esiste', function() {
+			dummyRequest.query = { search: goodText };
+			dummyRoutes.quoteExists(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify(true))).to.be.true;
+		});
+
+		it('in caso di esito negativo, deve rispondere con status = 500', function() {
+			dummyRequest.query = { search: errText };
+			dummyRoutes.quoteExists(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(500, responseContentType)).to.be.true;
+		});
+
+		it('in caso di esito negativo, deve ritornare un messaggio di errore', function() {
+			dummyRequest.query = { quote: errText };
+			dummyRoutes.quoteExists(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify({ error: errorMessage }))).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'remove\'', function() {
+		var goodQuoteId = '12345678',
+			badQuoteId = '13572468',
+			errorMessage = 'internal error',
+			removeQuoteStub = sinon.stub(mongoRepository, 'remove'),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository);
+		
+		removeQuoteStub.withArgs(goodQuoteId).callsArgWith(1, false, goodQuoteId);
+		removeQuoteStub.withArgs(badQuoteId).callsArgWith(1, true, errorMessage);
+		
+		it('deve chiamare la funzione \'remove\' del repository', function() {
+			dummyRequest.body = {};
+			dummyRoutes.remove(dummyRequest, responseStub);
+
+			expect(removeQuoteStub.calledOnce).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve rispondere con status = 200', function() {
+			dummyRequest.body = { quoteId: goodQuoteId };
+			dummyRoutes.remove(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve ritornare l\'id della citazione appena rimossa', function() {
+			dummyRequest.body = { quoteId: goodQuoteId };
+			dummyRoutes.remove(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify(goodQuoteId))).to.be.true;
+		});
+		
+		it('in caso di esito negativo, deve rispondere con status = 500', function() {
+			dummyRequest.body = { quoteId: badQuoteId };
+			dummyRoutes.remove(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(500, responseContentType)).to.be.true;
+		});
+		
+		it('in caso di esito negativo, deve ritornare un messaggio di errore', function() {
+			dummyRequest.body = { quoteId: badQuoteId };
+			dummyRoutes.remove(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify({ error: errorMessage }))).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'removeWrongQuotes\'', function() {
+		var removeWrongQuotesStub = sinon.stub(mongoRepository, 'removeWrongQuotes').callsArgWith(0, null),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository);
+		
+		dummyRoutes.removeWrongQuotes(dummyRequest, responseStub);
+		
+		it('deve chiamare la funzione \'removeWrongQuotes\' del repository', function() {
+			expect(removeWrongQuotesStub.calledOnce).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve rispondere con status = 200', function() {
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'share\'', function() {
+		var shareStub = sinon.stub(mongoRepository, 'share').callsArgWith(1, null),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository);
+		
+		dummyRequest.body = {};
+		
+		dummyRoutes.share(dummyRequest, responseStub);
+		
+		it('deve chiamare la funzione \'share\' del repository', function() {
+			expect(shareStub.calledOnce).to.be.true;
+		});
+		
+		it('deve rispondere sempre con status = 200', function() {
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+	});
+	
+	describe('La route \'tags\'', function() {
+		var tagsResult = [ { "count": 1, "name": "abitudine" } ],
+			tagsStub = sinon.stub(mongoRepository, 'tags').callsArgWith(0, false, tagsResult),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository);
+		
+		dummyRoutes.tags(dummyRequest, responseStub);
+		
+		it('deve chiamare la funzione \'tags\' del repository', function() {
+			expect(tagsStub.calledOnce).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve rispondere con status = 200', function() {
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve rispondere con un elenco di tag e numero di citazioni per tag', function() {
+			expect(responseStub.end.calledWith(JSON.stringify(tagsResult))).to.be.true;
+		});
+		
+	});
+	
 });
