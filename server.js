@@ -38,6 +38,7 @@ app.get('/list', routes.list);
 app.get('/quoteExists', routes.quoteExists);
 app.post('/share', routes.share);
 app.get('/tags', routes.tags);
+app.put('/update', routes.update);
 
 // Routes di utilità
 app.get('/clean', routes.clean);

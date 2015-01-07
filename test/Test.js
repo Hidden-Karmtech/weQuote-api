@@ -376,10 +376,11 @@ describe('Il modulo Routes', function() {
 			goodText = 'testo che esiste',
 			badText = 'testo che non esiste',
 			errText = 'simula errore',
-			errorMessage = 'errore interno';
+			errorMessage = 'errore interno',
+			dummyID = "549351f485ca049ca121e70d";
 		
-		quoteExistsStub.withArgs(goodText).callsArgWith(1, false, true);
-		quoteExistsStub.withArgs(badText).callsArgWith(1, false, false);
+		quoteExistsStub.withArgs(goodText).callsArgWith(1, false, dummyID);
+		quoteExistsStub.withArgs(badText).callsArgWith(1, false, -1);
 		quoteExistsStub.withArgs(errText).callsArgWith(1, true, errorMessage);
 		
 		it('deve chiamare la funzione \'quoteExists\' del repository', function() {
@@ -396,18 +397,18 @@ describe('Il modulo Routes', function() {
 			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
 		});
 
-		it('in caso di esito positivo, deve restituire \'true\' se il testo della citazione esiste', function() {
+		it('in caso di esito positivo, deve restituire l\'ID della citazione se esiste', function() {
 			dummyRequest.query = { search: goodText };
 			dummyRoutes.quoteExists(dummyRequest, responseStub);
 
-			expect(responseStub.end.calledWith(JSON.stringify(true))).to.be.true;
+			expect(responseStub.end.calledWith(JSON.stringify(dummyID))).to.be.true;
 		});
 		
-		it('in caso di esito positivo, deve restituire \'false\' se il testo della citazione non esiste', function() {
-			dummyRequest.query = { search: goodText };
+		it('in caso di esito positivo, deve restituire -1 se la citazione non esiste', function() {
+			dummyRequest.query = { search: badText };
 			dummyRoutes.quoteExists(dummyRequest, responseStub);
 
-			expect(responseStub.end.calledWith(JSON.stringify(true))).to.be.true;
+			expect(responseStub.end.calledWith(JSON.stringify(-1))).to.be.true;
 		});
 
 		it('in caso di esito negativo, deve rispondere con status = 500', function() {
@@ -529,6 +530,69 @@ describe('Il modulo Routes', function() {
 		it('in caso di esito positivo, deve rispondere con un elenco di tag e numero di citazioni per tag', function() {
 			expect(responseStub.end.calledWith(JSON.stringify(tagsResult))).to.be.true;
 		});
+		
+	});
+	
+	describe('La route \'update\'', function() {
+		var dummyId = "549351f485ca049ca121e70d",
+			goodQuote = {
+				author: "Autore di prova",
+				text: "Questo è il testo di prova della citazione di prova modificata",
+				tags: [{
+					name: "amore",
+				}],
+				source: "nessuna"
+			},
+			badQuote = {
+				text: "Questo è il testo di prova della citazione di prova errata",
+				tags: [{
+					name: "odio",
+				}],
+				source: "nessuna"
+			},
+			updateStub = sinon.stub(mongoRepository, 'update'),
+			dummyRequest = {},
+			dummyRoutes = Routes.create(mongoRepository),
+			errorMessage = "Autore obbligatorio";
+		
+		updateStub.withArgs(dummyId, goodQuote).callsArgWith(2, false, goodQuote);
+		updateStub.withArgs(dummyId, badQuote).callsArgWith(2, true, errorMessage);
+		
+		it('deve chiamare la funzione \'update\' del repository', function() {
+			dummyRequest.body = {};			
+			dummyRoutes.update(dummyRequest, responseStub);
+
+			expect(updateStub.calledOnce).to.be.true;
+		});
+
+		it('in caso di esito positivo, deve rispondere con status = 200', function() {
+			dummyRequest.body = { quoteId: dummyId, newQuote: goodQuote };
+			dummyRoutes.update(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
+		});
+		
+		it('in caso di esito positivo, deve ritornare il modello modificato', function() {
+			dummyRequest.body = { quoteId: dummyId, newQuote: goodQuote };
+			dummyRoutes.update(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify(goodQuote))).to.be.true;
+		});
+		
+		it('in caso di modello non valido, deve rispondere con status = 500', function() {
+			dummyRequest.body = { quoteId: dummyId, newQuote: badQuote };
+			dummyRoutes.update(dummyRequest, responseStub);
+
+			expect(responseStub.writeHead.calledWith(500, responseContentType)).to.be.true;
+		});
+				
+		it('in caso di modello non valido, deve ritornare un messaggio di errore', function() {
+			dummyRequest.body = { quoteId: dummyId, newQuote: badQuote };
+			dummyRoutes.update(dummyRequest, responseStub);
+
+			expect(responseStub.end.calledWith(JSON.stringify({ error: errorMessage }))).to.be.true;
+		});
+		
 		
 	});
 	

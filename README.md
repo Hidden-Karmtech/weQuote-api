@@ -31,7 +31,7 @@
 	- verb: GET
 	- params:
 		- search: Testo citazione
-	- return: true se la citazione esiste, altrimenti false
+	- return: id della citazione se esiste, altrimenti -1
 
 - share
 	- verb: POST
@@ -44,3 +44,10 @@
 	- verb: GET
 	- params: -
 	- return: lista tag e numero di citazioni per tag
+	
+- update
+	- verb: PUT
+	- params: 
+		- quoteId: ID citazione
+		- newQuote: Citazione da aggiornare
+	- return: citazione modificata
