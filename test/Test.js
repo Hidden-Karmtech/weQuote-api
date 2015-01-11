@@ -168,7 +168,7 @@ describe('Il modulo MongoRepository', function() {
 
 describe('Il modulo Routes', function() {
 	var responseStub = sinon.stub(express.response),
-		responseContentType = { "Content-Type": "application/json" };
+		responseContentType = { "Content-Type": "application/json; charset=utf-8" };
 	
 	it('deve esistere', function() {
 		expect(Routes).not.to.be.undefined;
@@ -180,10 +180,11 @@ describe('Il modulo Routes', function() {
 	
 	describe('La route \'authors\'', function() {
 		var authorsResult = [ { "count": 1, "name": "Aaron Ciechanover" } ],
-			authorsStub = sinon.stub(mongoRepository, 'authors').callsArgWith(0, false, authorsResult),
+			authorsStub = sinon.stub(mongoRepository, 'authors').callsArgWith(1, false, authorsResult),
 			dummyRequest = {},
 			dummyRoutes = Routes.create(mongoRepository);
 		
+		dummyRequest.query = {};
 		dummyRoutes.authors(dummyRequest, responseStub);
 		
 		it('deve chiamare la funzione \'authors\' del repository', function() {
@@ -513,10 +514,11 @@ describe('Il modulo Routes', function() {
 	
 	describe('La route \'tags\'', function() {
 		var tagsResult = [ { "count": 1, "name": "abitudine" } ],
-			tagsStub = sinon.stub(mongoRepository, 'tags').callsArgWith(0, false, tagsResult),
+			tagsStub = sinon.stub(mongoRepository, 'tags').callsArgWith(1, false, tagsResult),
 			dummyRequest = {},
 			dummyRoutes = Routes.create(mongoRepository);
 		
+		dummyRequest.query = {};
 		dummyRoutes.tags(dummyRequest, responseStub);
 		
 		it('deve chiamare la funzione \'tags\' del repository', function() {

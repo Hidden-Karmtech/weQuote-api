@@ -2,7 +2,8 @@
 
 - authors
 	- verb: GET
-	- params: -
+	- params: 
+		- [optional] maxlen: numero massimo di caratteri per la citazione
 	- return: lista autori e numero di citazioni per autore
 	
 - handshake
@@ -42,7 +43,8 @@
 
 - tags
 	- verb: GET
-	- params: -
+	- params: 
+		- [optional] maxlen: numero massimo di caratteri per la citazione
 	- return: lista tag e numero di citazioni per tag
 	
 - update
