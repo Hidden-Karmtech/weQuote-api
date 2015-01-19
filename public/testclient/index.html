@@ -136,6 +136,9 @@
                 $.ajax({
                     type: "POST",
                     url: serverUrl + "insert",
+                    headers: {
+                    	"X-AUTHKEY": "HktWequote14$"
+                    },
                     data: {
                         quote: {
 							text: text,
