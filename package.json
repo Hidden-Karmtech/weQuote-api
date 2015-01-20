@@ -35,7 +35,8 @@
     "sinon": "~1.12.2",
     "sinon-chai": "~2.6.0",
     "underscore": "^1.7.0",
-    "underscore.string": "^2.4.0"
+    "underscore.string": "^2.4.0",
+    "keen.io": "latest"
   },
   "scripts": {
     "test": "mocha"
