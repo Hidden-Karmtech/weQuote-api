@@ -27,6 +27,9 @@
             	$.ajax({
                     type: "DELETE",
                     url: serverUrl + "remove",
+                    headers: {
+                    	"X-AUTHKEY": "dummykey"
+                    },
                     data: {                    	
                         quoteId: quoteId                    
                     }
@@ -137,7 +140,7 @@
                     type: "POST",
                     url: serverUrl + "insert",
                     headers: {
-                    	"X-AUTHKEY": "HktWequote14$"
+                    	"X-AUTHKEY": "dummykey"
                     },
                     data: {
                         quote: {
