@@ -16,6 +16,7 @@ var express = require('express'),
 	mongoRepository = MongoRepository.create(mongoose, models),
 	Routes = require('./lib/Routes'),
 	routes = Routes.create(mongoRepository),
+	RoutesDef = require('./lib/RoutesDef'),
 	Middlewares = require('./lib/Middlewares'),
 	middlewares = Middlewares.create();
 	
@@ -31,20 +32,8 @@ app.use(cors());
 app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
-// Routes
-app.get('/authors', routes.authors);
-app.post('/insert', routes.insert);
-app.get('/list', routes.list);
-app.get('/quoteExists', routes.quoteExists);
-app.post('/share', routes.share);
-app.get('/tags', routes.tags);
-app.put('/update', routes.update);
-
-// Routes di utilità
-app.get('/clean', routes.clean);
-app.get('/handshake', routes.handshake);
-app.get('/removeWrongQuotes', routes.removeWrongQuotes);
-app.del('/remove', routes.remove);
+// Definizione routes
+RoutesDef.define(app, routes);
 
 // Connessione a MongoDb
 mongoose.connect(config.mongo.getConnectionString());
