@@ -28,7 +28,7 @@
                     type: "DELETE",
                     url: serverUrl + "remove",
                     headers: {
-                    	"X-AUTHKEY": "dummykey"
+                    	"X-AUTHKEY": $("#txtAuthKey").val()
                     },
                     data: {                    	
                         quoteId: quoteId                    
@@ -51,7 +51,7 @@
                 
                 $.ajax({
                     type: "GET",
-                    url: serverUrl + "v2/list",
+                    url: serverUrl + "list",
                     data: {
                     	deviceUUID: deviceUUID,
                         search: search,
@@ -140,7 +140,7 @@
                     type: "POST",
                     url: serverUrl + "insert",
                     headers: {
-                    	"X-AUTHKEY": "dummykey"
+                    	"X-AUTHKEY": $("#txtAuthKey").val()
                     },
                     data: {
                         quote: {
@@ -206,6 +206,17 @@
     <body>        
         <h1>TEST API</h3>
         
+        <h3>Autenticazione</h3>
+        
+        <div>
+        	<table>
+        		<tr>
+        			<td align="right">KEY: </td>
+        			<td><input id="txtAuthKey" type="text" size="30"/></td>
+        		</tr>        		
+        	</table>
+        </div>
+
         <h3>Inserimento</h3>
         
         <div>
