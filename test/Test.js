@@ -125,7 +125,7 @@ describe('Il modulo Utils', function() {
 						name: 'poesia'
 					}]
 				}
-				expect(utils.getOmniSearch(quote)).to.equal('testo della citazionefrank johnsonamorepoesia');
+				expect(utils.getOmniSearch(quote)).to.equal('testo della citazione|frank johnson|amore|poesia');
 			});
 			
 		});
@@ -179,12 +179,14 @@ describe('Il modulo Routes', function() {
 	});
 	
 	describe('La route \'authors\'', function() {
-		var authorsResult = [ { "count": 1, "name": "Aaron Ciechanover" } ],
-			authorsStub = sinon.stub(mongoRepository, 'authors').callsArgWith(1, false, authorsResult),
+		var authorsRequest = [{"_id":"A.C. Bhaktivedanta Swami Prabhupada","value":1}],
+			authorsResult = [{"name":"A.C. Bhaktivedanta Swami Prabhupada","count":1}],
+			authorsStub = sinon.stub(mongoRepository, 'authors').callsArgWith(1, false, authorsRequest),
 			dummyRequest = {},
 			dummyRoutes = Routes.create(mongoRepository);
 		
 		dummyRequest.query = {};
+		dummyRequest.query.maxlen = 50;
 		dummyRoutes.authors(dummyRequest, responseStub);
 		
 		it('deve chiamare la funzione \'authors\' del repository', function() {
@@ -195,7 +197,7 @@ describe('Il modulo Routes', function() {
 			expect(responseStub.writeHead.calledWith(200, responseContentType)).to.be.true;
 		});
 		
-		it('in caso di esito positivo, deve rispondere con un elenco di autori e numero di citazioni per autore', function() {
+		it('in caso di esito positivo, deve rispondere con un elenco di autori e numero di citazioni per autore', function() {				
 			expect(responseStub.end.calledWith(JSON.stringify(authorsResult))).to.be.true;
 		});
 		
@@ -252,14 +254,17 @@ describe('Il modulo Routes', function() {
 				source: "nessuna"
 			},
 			insertStub = sinon.stub(mongoRepository, 'insert'),
-			dummyRequest = {},
+			dummyRequest = {},			
 			dummyRoutes = Routes.create(mongoRepository),
 			errorMessage = "Autore obbligatorio";
 		
 		insertStub.withArgs(goodQuote).callsArgWith(1, false, goodQuote);
 		insertStub.withArgs(badQuote).callsArgWith(1, true, errorMessage);
 		
-		it('deve chiamare la funzione \'insert\' del repository', function() {
+		dummyRequest.headers = {};
+		dummyRequest.headers['x-authkey'] = require('../lib/local').AUTH_KEY;
+		
+		it('deve chiamare la funzione \'insert\' del repository', function() {			
 			dummyRequest.body = {};			
 			dummyRoutes.insert(dummyRequest, responseStub);
 
@@ -439,6 +444,9 @@ describe('Il modulo Routes', function() {
 		removeQuoteStub.withArgs(goodQuoteId).callsArgWith(1, false, goodQuoteId);
 		removeQuoteStub.withArgs(badQuoteId).callsArgWith(1, true, errorMessage);
 		
+		dummyRequest.headers = {};
+		dummyRequest.headers['x-authkey'] = require('../lib/local').AUTH_KEY;
+		
 		it('deve chiamare la funzione \'remove\' del repository', function() {
 			dummyRequest.body = {};
 			dummyRoutes.remove(dummyRequest, responseStub);
@@ -513,11 +521,12 @@ describe('Il modulo Routes', function() {
 	});
 	
 	describe('La route \'tags\'', function() {
-		var tagsResult = [ { "count": 1, "name": "abitudine" } ],
-			tagsStub = sinon.stub(mongoRepository, 'tags').callsArgWith(1, false, tagsResult),
+		var tagsRequest = [{"_id":"alcol","value":54}],
+			tagsResult = [{"name":"alcol","count":54}],
+			tagsStub = sinon.stub(mongoRepository, 'tags').callsArgWith(1, false, tagsRequest),
 			dummyRequest = {},
 			dummyRoutes = Routes.create(mongoRepository);
-		
+				
 		dummyRequest.query = {};
 		dummyRoutes.tags(dummyRequest, responseStub);
 		
@@ -559,6 +568,9 @@ describe('Il modulo Routes', function() {
 		
 		updateStub.withArgs(dummyId, goodQuote).callsArgWith(2, false, goodQuote);
 		updateStub.withArgs(dummyId, badQuote).callsArgWith(2, true, errorMessage);
+		
+		dummyRequest.headers = {};
+		dummyRequest.headers['x-authkey'] = require('../lib/local').AUTH_KEY;
 		
 		it('deve chiamare la funzione \'update\' del repository', function() {
 			dummyRequest.body = {};			
