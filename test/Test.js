@@ -19,7 +19,9 @@ var mocha = require('mocha'),
 	MongoRepository = require('../lib/MongoRepository'),
 	mongoRepository = MongoRepository.create(mongoose, models),
 	Routes = require('../lib/Routes'),
-	routes = Routes.create(mongoRepository);
+	routes = Routes.create(mongoRepository),
+	Analytics = require('../lib/Analytics'),
+	analytics = Analytics.create();
 
 chai.use(sinonChai);
 
@@ -85,6 +87,34 @@ describe('Il modulo Middlewares', function() {
 
 		it('deve avere il metodo forceHttps', function() {
 			expect(middlewares).have.property('forceHttps');
+		});
+		
+	});
+	
+});
+
+describe('Il modulo Analytics', function() {
+	
+	it('deve esistere', function() {
+		expect(Analytics).not.to.be.undefined;
+	});
+	
+	it('deve consentire la creazione di un nuovo oggetto analytics', function() {
+		expect(analytics).not.to.be.undefined;
+	});
+	
+	describe('Un oggetto analytics', function() {
+
+		it('deve avere il metodo insertSearch', function() {
+			expect(analytics).have.property('insertSearch');
+		});
+		
+		it('deve avere il metodo insertShare', function() {
+			expect(analytics).have.property('insertShare');
+		});
+		
+		it('deve avere il metodo insertNoResult', function() {
+			expect(analytics).have.property('insertNoResult');
 		});
 		
 	});
