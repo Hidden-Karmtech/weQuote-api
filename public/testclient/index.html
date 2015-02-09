@@ -12,10 +12,11 @@
             function share(deviceUUID, quoteId) {
             	$.ajax({
                     type: "POST",
-                    url: serverUrl + "share",
+                    url: serverUrl + "logEvent",
                     data: {
                     	deviceUUID: deviceUUID,
-                        quoteId: quoteId                    
+                        quoteId: quoteId,
+                        event: 'share'                    
                     }
                 })
                 .done(function(result) {

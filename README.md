@@ -29,6 +29,13 @@
 		- [optional] limit: numero massimo di risultati 
 		- [optional] maxlen: numero massimo di caratteri per la citazione		
 	- return: elenco citazioni che soddisfano i criteri di ricerca
+
+- logEvent
+	- verb: POST
+	- params:
+		- quoteId: Id citazione
+		- deviceUUID: UUID dispositivo
+	- return: -
 	
 - quoteExists
 	- verb: GET
