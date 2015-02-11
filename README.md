@@ -43,7 +43,7 @@
 		- search: Testo citazione
 	- return: id della citazione se esiste, altrimenti -1
 
-- share
+- share (Deprecato)
 	- verb: POST
 	- params:
 		- quoteId: Id citazione
