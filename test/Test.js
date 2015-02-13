@@ -49,7 +49,7 @@ describe('Il modulo Config', function() {
 			expect(config.mongo.host).to.equal('127.0.0.1');
 			expect(config.mongo.port).to.equal(27017);
 			expect(config.mongo.username).to.equal('admin');
-			expect(config.mongo.password).to.equal('a43H9aZb6iuE');
+			expect(config.mongo.password).to.equal('ywWPTDjb64Zt');
 		});
 		
 		it('devono restituire la stringa di connessione', function() {
@@ -57,7 +57,7 @@ describe('Il modulo Config', function() {
 		});
 		
 		it('devono restituire la stringa di connessione con dei valori di default se non presenti le variabili di ambiente di OpenShift', function() {
-			expect(config.mongo.getConnectionString()).to.equal('mongodb://admin:a43H9aZb6iuE@127.0.0.1:27017/api');
+			expect(config.mongo.getConnectionString()).to.equal('mongodb://admin:ywWPTDjb64Zt@127.0.0.1:27017/api');
 		});
 		
 	});
@@ -105,18 +105,10 @@ describe('Il modulo Analytics', function() {
 	
 	describe('Un oggetto analytics', function() {
 
-		it('deve avere il metodo insertSearch', function() {
-			expect(analytics).have.property('insertSearch');
+		it('deve avere il metodo insertLogEvent', function() {
+			expect(analytics).have.property('insertLogEvent');
 		});
-		
-		it('deve avere il metodo insertShare', function() {
-			expect(analytics).have.property('insertShare');
-		});
-		
-		it('deve avere il metodo insertNoResult', function() {
-			expect(analytics).have.property('insertNoResult');
-		});
-		
+				
 	});
 	
 });
