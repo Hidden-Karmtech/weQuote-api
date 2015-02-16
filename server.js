@@ -27,7 +27,7 @@ var express = require('express'),
 app.use(middlewares.forceHttps);
 app.use(morgan('combined'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride);
 app.use(cors());
 app.use(express.static(__dirname + '/public'));
@@ -35,6 +35,7 @@ app.use(express.static(__dirname + '/public'));
 // Definizione routes
 var router = express.Router();
 RoutesDef.define(router, routes);
+app.use('/', router);
 
 // Connessione a MongoDb
 mongoose.connect(config.mongo.getConnectionString());
