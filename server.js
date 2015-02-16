@@ -7,6 +7,8 @@ var express = require('express'),
 	cors = require('cors'),
 	mongoose = require('mongoose'),
 	app = express(),
+	bodyParser = require('body-parser'),
+	morgan = require('morgan'),	
 	db,
 	Models = require('./lib/Models'),
 	models = Models.create(mongoose),
@@ -19,21 +21,17 @@ var express = require('express'),
 	RoutesDef = require('./lib/RoutesDef'),
 	Middlewares = require('./lib/Middlewares'),
 	middlewares = Middlewares.create();
-	
+
 // Configurazione app
 app.use(middlewares.forceHttps);
-app.use(express.favicon());
-app.use(express.logger());
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.bodyParser());
-app.use(express.methodOverride());
+app.use(morgan('combined'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
-// Definizione routes
-RoutesDef.define(app, routes);
+//Definizione routes
+app.use('/', RoutesDef.define(express, routes));
 
 // Connessione a MongoDb
 mongoose.connect(config.mongo.getConnectionString());
