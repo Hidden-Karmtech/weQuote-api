@@ -35,6 +35,7 @@
 	- params:
 		- quoteId: Id citazione
 		- deviceUUID: UUID dispositivo
+		- + valori dinamici
 	- return: -
 	
 - quoteExists
